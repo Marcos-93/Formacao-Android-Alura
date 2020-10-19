@@ -2,7 +2,6 @@ package br.com.alura.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,9 +18,12 @@ import br.com.alura.R;
 import br.com.alura.dao.AlunoDAO;
 import br.com.alura.model.Aluno;
 
+import static br.com.alura.ui.activity.ConstantesActivities.CHAVE_ALUNO;
+
 public class ListaAlunosActivity extends AppCompatActivity {
 
     public static final String TITULO_APPBAR = "Lista de Alunos";
+
     private final AlunoDAO dao = new AlunoDAO();
 
     @Override
@@ -39,12 +41,12 @@ public class ListaAlunosActivity extends AppCompatActivity {
         botaoNovoAluno.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                abreFormularioAlunoActivity();
+                abreFormularioModoInsereAluno();
             }
         });
     }
 
-    private void abreFormularioAlunoActivity() {
+    private void abreFormularioModoInsereAluno() {
         startActivity(new Intent(this, FormularioAlunoActivity.class));//De onde estou para onde quero ir
     }
 
@@ -57,18 +59,30 @@ public class ListaAlunosActivity extends AppCompatActivity {
     private void configuraLista() {
         ListView listaDeAlunos = findViewById(R.id.activity_lista_alunos_listview);
         final List<Aluno> alunos = dao.todos();
+        configuraaAdapter(listaDeAlunos, alunos);
+        configuraListenerDeCliquePorItem(listaDeAlunos);
+    }
+
+    private void configuraListenerDeCliquePorItem(ListView listaDeAlunos) {
+        listaDeAlunos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Aluno alunoEscolhido = (Aluno) parent.getItemAtPosition(position); //Garante que está buscando da lista correta
+                abreFormularioModoEditaAluno(alunoEscolhido);
+            }
+        });
+    }
+
+    private void abreFormularioModoEditaAluno(Aluno aluno) {
+        Intent vaiParaFormularioActivity = new Intent(ListaAlunosActivity.this, FormularioAlunoActivity.class);
+        vaiParaFormularioActivity.putExtra(CHAVE_ALUNO,aluno);
+        startActivity(vaiParaFormularioActivity);
+    }
+
+    private void configuraaAdapter(ListView listaDeAlunos, List<Aluno> alunos) {
         listaDeAlunos.setAdapter(new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_list_item_1,
                alunos));
-        listaDeAlunos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Aluno alunoEscolhido = alunos.get(position);
-                Intent vaiParaFormularioActivity = new Intent(ListaAlunosActivity.this, FormularioAlunoActivity.class);
-                vaiParaFormularioActivity.putExtra("aluno",alunoEscolhido);
-                startActivity(vaiParaFormularioActivity);
-            }
-        });
     }
 }
