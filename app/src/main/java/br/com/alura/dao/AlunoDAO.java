@@ -12,8 +12,8 @@ public class AlunoDAO {
     public void salvar(Aluno aluno) {
         alunos.add(aluno);
     }
+
     public List<Aluno> todos(){
         return Collections.unmodifiableList(alunos);
-//        return new ArrayList<>(alunos);
     }
 }
