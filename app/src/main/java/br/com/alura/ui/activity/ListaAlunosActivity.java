@@ -6,7 +6,6 @@ import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import br.com.alura.R;
 import br.com.alura.dao.AlunoDAO;
 import br.com.alura.model.Aluno;
+import br.com.alura.ui.adapter.ListaAlunosAdapter;
 
 import static br.com.alura.ui.activity.ConstantesActivities.CHAVE_ALUNO;
 
@@ -26,8 +26,7 @@ public class ListaAlunosActivity extends AppCompatActivity {
     public static final String TITULO_APPBAR = "Lista de Alunos";
 
     private final AlunoDAO dao = new AlunoDAO();
-    private ArrayAdapter<Aluno> adapter;
-
+    private ListaAlunosAdapter adapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,8 +81,9 @@ public class ListaAlunosActivity extends AppCompatActivity {
     }
 
     private void configuraLista() {
+        adapter = new ListaAlunosAdapter(this);
         ListView listaDeAlunos = findViewById(R.id.activity_lista_alunos_listview);
-        configuraAdapter(listaDeAlunos);
+        listaDeAlunos.setAdapter(adapter);
         configuraListenerDeCliquePorItem(listaDeAlunos);
         registerForContextMenu(listaDeAlunos);
     }
@@ -107,12 +107,5 @@ public class ListaAlunosActivity extends AppCompatActivity {
         Intent vaiParaFormularioActivity = new Intent(ListaAlunosActivity.this, FormularioAlunoActivity.class);
         vaiParaFormularioActivity.putExtra(CHAVE_ALUNO,aluno);
         startActivity(vaiParaFormularioActivity);
-    }
-
-    private void configuraAdapter(ListView listaDeAlunos) {
-        adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1);
-        listaDeAlunos.setAdapter(adapter);
     }
 }
